@@ -1,7 +1,46 @@
+import axios, {AxiosResponse } from "axios";
 import { Button, Label, TextInput } from "flowbite-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
+interface FormDataType {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface signUpResponseType{
+  message: string;
+  user?: {
+    id: string;
+    username: string;
+    email: string;
+  }
+}
+
 function singUp() {
+  const [fromData, setFormData] = useState<FormDataType>({
+    username: "",
+    email: "",
+    password: "",
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...fromData, [e.target.id]: e.target.value })
+  }
+const submitHandler = async (e: React.FormEvent<HTMLFormElement>):Promise<void>=> {
+   e.preventDefault()
+  try {
+   const res: AxiosResponse<signUpResponseType> = await axios.post('/api/auth/signup', fromData, {
+    headers: { "Content-Type": "application/json" }
+   })
+   console.log(res.data)
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
   return (
     <div className="mt-20 min-h-screen ">
       <div className=" p-3 max-w-3xl mx-auto flex flex-col md:flex-row md:items-center gap-4 ">
@@ -18,18 +57,18 @@ function singUp() {
           </p>
         </div>
         <div className=" flex-1">
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={submitHandler}>
             <div>
               <Label htmlFor="username" value="Username" />
-              <TextInput id="username" type="text" placeholder="Username" />
+              <TextInput id="username" type="text" placeholder="Username" onChange={handleChange} />
             </div>
             <div>
               <Label htmlFor="email" value="Email" />
-              <TextInput id="email" type="text" placeholder="Email" />
+              <TextInput id="email" type="email" placeholder="Email" onChange={handleChange} />
             </div>
             <div>
               <Label htmlFor="password" value="Password" />
-              <TextInput id="password" type="text" placeholder="Password" />
+              <TextInput id="password" type="password" placeholder="Password" onChange={handleChange}  />
             </div>
             <Button gradientDuoTone="purpleToPink" type="submit">Sign Up</Button>
           </form>
