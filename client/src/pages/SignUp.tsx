@@ -1,5 +1,5 @@
-import axios, {AxiosResponse } from "axios";
-import { Button, Label, TextInput } from "flowbite-react";
+import axios, {  AxiosResponse } from "axios";
+import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -9,13 +9,15 @@ interface FormDataType {
   password: string;
 }
 
-interface signUpResponseType{
+
+interface signUpResponseType {
   message: string;
+  success: boolean;
   user?: {
     id: string;
     username: string;
     email: string;
-  }
+  };
 }
 
 function singUp() {
@@ -23,23 +25,42 @@ function singUp() {
     username: "",
     email: "",
     password: "",
-  })
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...fromData, [e.target.id]: e.target.value })
-  }
-const submitHandler = async (e: React.FormEvent<HTMLFormElement>):Promise<void>=> {
-   e.preventDefault()
-  try {
-   const res: AxiosResponse<signUpResponseType> = await axios.post('/api/auth/signup', fromData, {
-    headers: { "Content-Type": "application/json" }
-   })
-   console.log(res.data)
-  }
-  catch (error) {
-    console.log(error)
-  }
-}
+    setFormData({ ...fromData, [e.target.id]: e.target.value.trim() });
+  };
+  const submitHandler = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    e.preventDefault();
+    if (!fromData.username || !fromData.email || !fromData.password) {
+      setErrorMessage("Please fill all the fields");
+      return;
+    }
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+      const res: AxiosResponse<signUpResponseType> = await axios.post(
+        "/api/auth/signup",
+        fromData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(res.data);
+      setLoading(false);
+    }catch (error: any ) {
+      if (error.response && error.response.data) {
+        setErrorMessage((error.response.data as { message: string }).message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="mt-20 min-h-screen ">
@@ -60,21 +81,58 @@ const submitHandler = async (e: React.FormEvent<HTMLFormElement>):Promise<void>=
           <form className="flex flex-col gap-4" onSubmit={submitHandler}>
             <div>
               <Label htmlFor="username" value="Username" />
-              <TextInput id="username" type="text" placeholder="Username" onChange={handleChange} />
+              <TextInput
+                id="username"
+                type="text"
+                placeholder="Username"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label htmlFor="email" value="Email" />
-              <TextInput id="email" type="email" placeholder="Email" onChange={handleChange} />
+              <TextInput
+                id="email"
+                type="email"
+                placeholder="Email"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label htmlFor="password" value="Password" />
-              <TextInput id="password" type="password" placeholder="Password" onChange={handleChange}  />
+              <TextInput
+                id="password"
+                type="password"
+                placeholder="Password"
+                onChange={handleChange}
+              />
             </div>
-            <Button gradientDuoTone="purpleToPink" type="submit">Sign Up</Button>
+            <Button
+              gradientDuoTone="purpleToPink"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">loading..</span>
+                </>
+              ) : (
+                "Sign Up"
+              )}
+            </Button>
           </form>
           <div className="mt-5 flex gap-4 text-sm ">
-            <span > have an account?</span>
-            <Link to={'/sign-in'} className="text-blue-500 ">Sign In</Link>
+            <span> have an account?</span>
+            <Link to={"/sign-in"} className="text-blue-500 ">
+              Sign In
+            </Link>
+          </div>
+          <div>
+            {errorMessage && (
+              <Alert className="mt-5" color="failure">
+                {errorMessage}
+              </Alert>
+            )}
           </div>
         </div>
       </div>
