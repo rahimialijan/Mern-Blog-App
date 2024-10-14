@@ -4,6 +4,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import BrandLink from "../utils/BrandLink";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+} from "../redux/auth/userSlice";
+import { AppDispatch } from "../redux/store";
 
 interface FormDataType {
   email: string;
@@ -25,10 +32,10 @@ function SignIn() {
     email: "",
     password: "",
   });
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+ 
+  const {loading, error: errorMessage } = useSelector((state: any) => state.user);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch<AppDispatch>();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...fromData, [e.target.id]: e.target.value.trim() });
   };
@@ -37,12 +44,11 @@ function SignIn() {
   ): Promise<void> => {
     e.preventDefault();
     if (!fromData.email || !fromData.password) {
-      setErrorMessage("Please fill all the fields");
-      return;
+      dispatch(loginFailure("Please fill in all fields"))
+      return
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(loginStart())
       const res: AxiosResponse<signUpResponseType> = await axios.post(
         "/api/auth/signin",
         fromData,
@@ -50,17 +56,16 @@ function SignIn() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      setLoading(false);
       if (res.status >= 200 && res.status < 300) {
+        dispatch(loginSuccess(res.data))
         navigate("/");
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
-        setErrorMessage((error.response.data as { message: string }).message);
+        dispatch(loginFailure((error.response.data as { message: string }).message));
       } else {
-        setErrorMessage("An unexpected error occurred.");
+        dispatch(loginFailure("An unexpected error occurred."));
       }
-      setLoading(false);
     }
   };
 
