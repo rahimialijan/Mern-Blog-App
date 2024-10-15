@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import BrandLink from "../utils/BrandLink";
+import OAuth from "../utils/OAuth";
 
 interface FormDataType {
   username: string;
@@ -71,7 +72,6 @@ function singUp() {
       <div className=" p-3 max-w-3xl mx-auto flex flex-col md:flex-row md:items-center gap-4 ">
         <div className="flex-1">
           <BrandLink className="text-4xl" />
-
           <p className="text-sm mt-5">
             this is a demo project, you can sign up with your email and passowrd
             or Google account
@@ -120,6 +120,7 @@ function singUp() {
                 "Sign Up"
               )}
             </Button>
+            <OAuth/>
           </form>
           <div className="mt-5 flex gap-4 text-sm ">
             <span> have an account?</span>

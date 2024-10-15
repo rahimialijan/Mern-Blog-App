@@ -19,11 +19,12 @@ export const userSlice = createSlice({
     // login
     loginStart: (state) => {
       state.loading = true;
+      state.error= null
     },
     loginSuccess: (state, action) => {
       state.currentUser = action.payload;
       state.loading = false;
-      state.error = action.payload;
+      state.error = null;
     },
     loginFailure: (state, action) => {
       state.loading = false;

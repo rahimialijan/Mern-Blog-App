@@ -10,7 +10,8 @@ import {
   loginSuccess,
   loginFailure,
 } from "../redux/auth/userSlice";
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
+import OAuth from "../utils/OAuth";
 
 interface FormDataType {
   email: string;
@@ -33,7 +34,7 @@ function SignIn() {
     password: "",
   });
  
-  const {loading, error: errorMessage } = useSelector((state: any) => state.user);
+  const {loading, error: errorMessage } = useSelector((state:RootState) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +49,7 @@ function SignIn() {
       return
     }
     try {
-      dispatch(loginStart())
+       dispatch(loginStart())
       const res: AxiosResponse<signUpResponseType> = await axios.post(
         "/api/auth/signin",
         fromData,
@@ -113,6 +114,7 @@ function SignIn() {
                 "Sign Up"
               )}
             </Button>
+            <OAuth/>
           </form>
           <div className="mt-5 flex gap-4 text-sm ">
             <span> Dont have an account?</span>
