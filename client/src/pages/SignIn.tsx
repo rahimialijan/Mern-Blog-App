@@ -25,6 +25,7 @@ interface signUpResponseType {
     id: string;
     username: string;
     email: string;
+    profilePicture:string
   };
 }
 
@@ -111,7 +112,7 @@ function SignIn() {
                   <span className="pl-3">loading..</span>
                 </>
               ) : (
-                "Sign Up"
+                "Sign In"
               )}
             </Button>
             <OAuth/>

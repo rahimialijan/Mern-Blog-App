@@ -1,13 +1,23 @@
-import { createSlice  } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface IinitialState {
-  currentUser: string | null;
+  currentUser: {
+    id: string | null;
+    email: string | null;
+    username: string | null;
+    profilePicture: string | null;
+  } ;
   loading: boolean;
-  error: string| null;
+  error: string | null;
 }
 
 const initialState: IinitialState = {
-  currentUser: null,
+  currentUser: {
+    id: null,
+    email: null,
+    username: null,
+    profilePicture: null,
+  },
   loading: false,
   error: null,
 };
@@ -19,7 +29,7 @@ export const userSlice = createSlice({
     // login
     loginStart: (state) => {
       state.loading = true;
-      state.error= null
+      state.error = null;
     },
     loginSuccess: (state, action) => {
       state.currentUser = action.payload;

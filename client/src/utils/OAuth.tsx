@@ -31,7 +31,7 @@ function OAuth() {
       const formData = {
         username: displayName,
         email: email,
-        photo: photoURL,
+        profilePicture: photoURL,
       };
       const response: AxiosResponse<signUpResponseType> = await axios.post("/api/auth/google", formData, {
         headers: {
