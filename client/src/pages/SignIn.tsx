@@ -11,7 +11,7 @@ import {
   loginFailure,
 } from "../redux/auth/userSlice";
 import { AppDispatch, RootState } from "../redux/store";
-import OAuth from "../utils/OAuth";
+import OAuth from "../Components/OAuth";
 
 interface FormDataType {
   email: string;

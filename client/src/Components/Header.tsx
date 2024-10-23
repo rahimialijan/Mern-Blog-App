@@ -3,13 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
 import BrandLink from "../utils/BrandLink";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
+import { setTheme } from "../redux/theme/themeSlice";
 
 
 
 function Header() {
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: RootState) => state.user);
 
   const isUserloggedIn = currentUser && currentUser.username && currentUser.email;
@@ -31,7 +33,7 @@ function Header() {
         <AiOutlineSearch />
       </Button>
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
+        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill onClick={() => dispatch(setTheme())}>
           <FaMoon />
         </Button>
         {isUserloggedIn ? (
