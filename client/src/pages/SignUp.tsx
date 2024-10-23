@@ -1,14 +1,16 @@
-import axios, {  AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import BrandLink from "../utils/BrandLink";
+import OAuth from "../utils/OAuth";
 
 interface FormDataType {
   username: string;
   email: string;
   password: string;
 }
-
 
 interface signUpResponseType {
   message: string;
@@ -28,6 +30,7 @@ function singUp() {
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...fromData, [e.target.id]: e.target.value.trim() });
@@ -50,9 +53,11 @@ function singUp() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(res.data);
       setLoading(false);
-    }catch (error: any ) {
+      if (res.status >= 200 && res.status < 300) {
+        navigate("/sign-in");
+      }
+    } catch (error: any) {
       if (error.response && error.response.data) {
         setErrorMessage((error.response.data as { message: string }).message);
       } else {
@@ -66,12 +71,7 @@ function singUp() {
     <div className="mt-20 min-h-screen ">
       <div className=" p-3 max-w-3xl mx-auto flex flex-col md:flex-row md:items-center gap-4 ">
         <div className="flex-1">
-          <Link to="/" className="font-bold dark:text-white text-4xl">
-            <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
-              Ali Jan's
-            </span>
-            Blogs
-          </Link>
+          <BrandLink className="text-4xl" />
           <p className="text-sm mt-5">
             this is a demo project, you can sign up with your email and passowrd
             or Google account
@@ -120,6 +120,7 @@ function singUp() {
                 "Sign Up"
               )}
             </Button>
+            <OAuth/>
           </form>
           <div className="mt-5 flex gap-4 text-sm ">
             <span> have an account?</span>
