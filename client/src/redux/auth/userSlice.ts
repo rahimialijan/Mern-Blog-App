@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface IinitialState {
+  isUserLoggedin: boolean;
   currentUser: {
     id: string | null;
     email: string | null;
@@ -12,6 +13,7 @@ interface IinitialState {
 }
 
 const initialState: IinitialState = {
+  isUserLoggedin: false,
   currentUser: {
     id: null,
     email: null,
@@ -33,6 +35,7 @@ export const userSlice = createSlice({
     },
     loginSuccess: (state, action) => {
       state.currentUser = action.payload;
+      state.isUserLoggedin = true;
       state.loading = false;
       state.error = null;
     },

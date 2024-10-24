@@ -6,21 +6,24 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Project from "./pages/Project";
 import Header from "./Components/Header";
-import  FooterCom  from "./Components/Footer/FooterCom";
+import FooterCom from "./Components/Footer/FooterCom";
+import PrivateRoute from "./Components/PrivateRoute";
 
 function App() {
   return (
     <BrowserRouter>
-    <Header/>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/projects" element={<Project />} />
       </Routes>
-      <FooterCom/>
+      <FooterCom />
     </BrowserRouter>
   );
 }
