@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import BrandLink from "../utils/BrandLink";
-import OAuth from "../utils/OAuth";
+import OAuth from "../Components/OAuth";
 
 interface FormDataType {
   username: string;
@@ -19,6 +19,7 @@ interface signUpResponseType {
     id: string;
     username: string;
     email: string;
+    profilePicture:string
   };
 }
 

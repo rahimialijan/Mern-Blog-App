@@ -70,6 +70,7 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   const { username, email, photo} = req.body;
+  console.log("Received data:", req.body);
   try {
     const user = await User.findOne({ email });
     if (user) {
@@ -86,7 +87,7 @@ export const google = async (req, res, next) => {
       const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
       const hashPassword = bcryptjs.hashSync(generatePassword, 10);
       const newUser = new User({
-        username: username.toLowerCase().split(" ").join("") + Math.random().toString(9).slice(-4),
+        username: username,
         email,
         password: hashPassword,
         profilePicture: photo,

@@ -14,6 +14,7 @@ interface signUpResponseType {
     id: string;
     username: string;
     email: string;
+    profilePicture: string | null;
   };
 }
 
@@ -26,25 +27,34 @@ function OAuth() {
     provider.getCustomParameters();
     try {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
-      console.log('resultsFromGoogle', resultsFromGoogle)
-      const { displayName, email, photoURL } = resultsFromGoogle.user;
-      const formData = {
-        username: displayName,
-        email: email,
-        photo: photoURL,
+      // const { displayName, email, photoURL } = resultsFromGoogle.user;
+      // const formData = {
+      //   username: displayName,
+      //   email: email,
+      //   profilePicture: photoURL,
+      // };
+      const userData = {
+        id: resultsFromGoogle.user.uid,
+        email: resultsFromGoogle.user.email,
+        username: resultsFromGoogle.user.displayName,
+        profilePicture: resultsFromGoogle.user.photoURL,
       };
-      const response: AxiosResponse<signUpResponseType> = await axios.post("/api/auth/google", formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      console.log("Form Data:", userData);
+      const response: AxiosResponse<signUpResponseType> = await axios.post(
+        "/api/auth/google",
+        userData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.status >= 200 && response.status < 300) {
         dispatch(loginSuccess(response.data));
-        console.log("response", response);
-        navigate('/')
+        navigate("/");
       }
     } catch (error) {
-      console.log("error for catch block",error);
+      console.log("error for catch block", error);
     }
   };
   return (

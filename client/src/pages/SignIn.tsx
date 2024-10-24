@@ -11,7 +11,7 @@ import {
   loginFailure,
 } from "../redux/auth/userSlice";
 import { AppDispatch, RootState } from "../redux/store";
-import OAuth from "../utils/OAuth";
+import OAuth from "../Components/OAuth";
 
 interface FormDataType {
   email: string;
@@ -25,6 +25,7 @@ interface signUpResponseType {
     id: string;
     username: string;
     email: string;
+    profilePicture:string
   };
 }
 
@@ -111,7 +112,7 @@ function SignIn() {
                   <span className="pl-3">loading..</span>
                 </>
               ) : (
-                "Sign Up"
+                "Sign In"
               )}
             </Button>
             <OAuth/>
