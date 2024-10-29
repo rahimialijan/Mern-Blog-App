@@ -19,13 +19,12 @@ function Dashboard() {
     
   }, [location.search])
   return (
-    <div>
-      <div>
+    <div className='min-h-screen flex flex-col md:flex-row'>
+      <div className='md:w-56'>
         <DashSidbar/>
       </div>
       <div>
         {tab === 'profile' && <DashProfile/>}
-        {tab === 'settings' && <h1>Settings</h1>}
       </div>
     </div>
   )
