@@ -10,42 +10,62 @@ export const test = (req, res) => {
 
 
 export const updateUser = async (req, res, next) => {
-   if (req.user.id !== req.params.id) {
-       return next(errorHandler(403, "You are not authorized to update this user"));
-   };
-   if (req.body.password) {
-      if(req.body.password.length < 6) {
-         return next(errorHandler(400, "Password must be at least 6 characters"));
-      }
-      req.body.password = bcryptjs.hashSync(req.body.password, 10);
-   }
+   try {
+      const { userId } = req.params;  // Using the correct parameter name
 
-   if (req.body.username) {
-      if(req.body.username.length < 3 || req.body.username.length > 20) {
-         return next(errorHandler(400, "Username must be at least 3 characters"));
-      }
-      if (req.body.username.includes(" ")) {
-         return next(errorHandler(400, "Username cannot contain spaces"));
-      }
-      if (req.body.username === req.user.username.toLowerCase()) {
-         return next(errorHandler(400, "Username must be lowercase"));
-      }
-      if(!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-         return next(errorHandler(400, "Username can only contain letters and numbers"));
-      }
-      try{
-        const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
-            $set: {
-                username: req.body.username,
-                email: req.body.email,
-                password: req.body.password,
-                profilePicture: req.body.profilePicture
-            }
-        }, {new: true});
-        const {password, ...rest} = updatedUser._doc;
-        res.status(200).json(rest);
-      }catch(err) {
-         return next(errorHandler(500, "Error updating user"));
-      }
+      console.log("User ID:", userId);
+      // Check if the logged-in user is authorized to update the requested user
+      if (req.user.id !== userId) {
+          return next(errorHandler(403, "You are not authorized to update this user"));
+      }     
+
+       // Handle password update with validation
+       if (req.body.password) {
+           if (req.body.password.length < 6) {
+               return next(errorHandler(400, "Password must be at least 6 characters"));
+           }
+           req.body.password = bcryptjs.hashSync(req.body.password, 10);
+       }
+
+       // Handle username validation
+       if (req.body.username) {
+           const username = req.body.username;
+           if (username.length < 3 || username.length > 20) {
+               return next(errorHandler(400, "Username must be between 3 and 20 characters"));
+           }
+           if (username.includes(" ")) {
+               return next(errorHandler(400, "Username cannot contain spaces"));
+           }
+           if (username !== username.toLowerCase()) {
+               return next(errorHandler(400, "Username must be in lowercase"));
+           }
+           if (!username.match(/^[a-zA-Z0-9]+$/)) {
+               return next(errorHandler(400, "Username can only contain letters and numbers"));
+           }
+       }
+
+       // Update user details
+       const updatedUser = await User.findByIdAndUpdate(
+         userId,  // Use userId from the URL parameters
+         {
+             $set: {
+                 ...req.body, // Update fields from the request body
+             },
+         },
+         { new: true } // Return the updated document
+     );
+     
+
+       // Check if the user exists
+       if (!updatedUser) {
+           return next(errorHandler(404, "User not found"));
+       }
+
+       // Exclude sensitive data like the password from the response
+       const { password, ...rest } = updatedUser._doc;
+
+       res.status(200).json(rest);
+   } catch (err) {
+       return next(errorHandler(500, "Error updating user"));
    }
-}
+};
