@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IinitialState {
   isUserLoggedin: boolean;
   currentUser: {
-    id: string | null;
+    _id: string | null;
     email: string | null;
     username: string | null;
     profilePicture: string | null;
-  } ;
+  };
   loading: boolean;
   error: string | null;
 }
@@ -15,7 +15,7 @@ interface IinitialState {
 const initialState: IinitialState = {
   isUserLoggedin: false,
   currentUser: {
-    id: null,
+    _id: null,
     email: null,
     username: null,
     profilePicture: null,
@@ -43,8 +43,29 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    //update user profile
+    updateStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateSuccess: (state, action) => {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    updateFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure } = userSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  updateStart,
+  updateSuccess,
+  updateFailure,
+} = userSlice.actions;
 export default userSlice.reducer;
